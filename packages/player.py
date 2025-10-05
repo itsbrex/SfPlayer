@@ -283,8 +283,6 @@ class Root(QtWidgets.QMainWindow):
                                         text='Detect Key',
                                         function=self.detect_key)
         self.detect_key_button.place(x=50, y=50)
-        self.detect_key_label = Label(self.music_function_frame, text='')
-        self.detect_key_label.place(x=160, y=50)
 
         self.channel_label = Label(self.music_function_frame, text='Channel')
         self.channel_label.place(x=500, y=20)
@@ -1056,8 +1054,11 @@ class Root(QtWidgets.QMainWindow):
             major_minor_preference=major_minor_preference,
             unit=unit,
             key_accuracy_tol=key_accuracy_tol)
-        current_key = textwrap.fill(current_key, width=40)
-        self.detect_key_label.configure(text=current_key)
+        msg_box = QtWidgets.QMessageBox()
+        msg_box.setWindowTitle('Detect Key Result')
+        msg_box.setStyleSheet("QLabel{min-width: 500px;}")
+        msg_box.setText(current_key)
+        msg_box.exec()
 
     def play_reverse(self):
         if not self.current_midi_file_read:
