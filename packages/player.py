@@ -1072,8 +1072,12 @@ class Root(QtWidgets.QMainWindow):
     def play_reverse_piano_key(self):
         if not self.current_midi_file_read:
             self.current_midi_file_read = rs.mp.read(self.current_midi_file)
-        rs.mp.write(reverse_piano_keys(self.current_midi_file_read),
-                    name='temp.mid')
+        try:
+            rs.mp.write(reverse_piano_keys(self.current_midi_file_read),
+                        name='temp.mid')
+        except:
+            import traceback
+            print(traceback.format_exc(), flush=True)
         self.already_load = False
         self.init_player_bar('temp.mid')
         self.start_play('temp.mid')
@@ -1112,8 +1116,10 @@ def reverse_piano_keys(obj):
     for k in temp.tracks:
         for i, each in enumerate(k.notes):
             if type(each) == rs.mp.note:
-                reverse_note = rs.mp.degree_to_note(87 - (each.degree - 21) +
-                                                    21)
+                current_value = 87 - (each.degree - 21) + 21
+                if not 0 <= current_value <= 127:
+                    continue
+                reverse_note = rs.mp.degree_to_note(current_value)
                 reverse_note.channel = each.channel
                 reverse_note.duration = each.duration
                 reverse_note.volume = each.volume
